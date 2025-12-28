@@ -7,6 +7,8 @@ import com.example.faischat.model.ShareKeyResult;
 import com.example.faischat.model.UserRegistration;
 import com.example.faischat.model.UserRole;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,30 +66,30 @@ public class InMemoryAuthRepository implements AuthRepository {
     }
 
     @Override
-    public ShareKeyResult generateShareKey(String ownerId, String label, long durationMinutes) {
+    public ShareKeyResult generateShareKey(String ownerId, String label, Duration duration) {
         if (TextUtils.isEmpty(ownerId)) {
-            return new ShareKeyResult(false, "Primero registra o selecciona la cuenta (correo o teléfono).", null, 0);
+            return new ShareKeyResult(false, "Primero registra o selecciona la cuenta (correo o teléfono).", null, null);
         }
 
         RegisteredUser owner = USERS.get(ownerId);
         if (owner == null) {
-            return new ShareKeyResult(false, "No encontramos la cuenta. Regístrate antes de generar llaves.", null, 0);
+            return new ShareKeyResult(false, "No encontramos la cuenta. Regístrate antes de generar llaves.", null, null);
         }
 
         if (TextUtils.isEmpty(label)) {
-            return new ShareKeyResult(false, "Asigna un nombre a la llave para saber quién tiene acceso.", null, 0);
+            return new ShareKeyResult(false, "Asigna un nombre a la llave para saber quién tiene acceso.", null, null);
         }
 
-        if (durationMinutes <= 0) {
-            return new ShareKeyResult(false, "Define una duración mayor a cero minutos.", null, 0);
+        if (duration == null || duration.isZero() || duration.isNegative()) {
+            return new ShareKeyResult(false, "Define una duración mayor a cero minutos.", null, null);
         }
 
         String keyValue = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-        long expiresAtMillis = System.currentTimeMillis() + durationMinutes * 60 * 1000;
-        ShareKey shareKey = new ShareKey(keyValue, label.trim(), expiresAtMillis, ownerId);
+        Instant expiresAt = Instant.now().plus(duration);
+        ShareKey shareKey = new ShareKey(keyValue, label.trim(), expiresAt, ownerId);
         SHARE_KEYS.put(ownerId, shareKey);
 
-        return new ShareKeyResult(true, "Llave creada y lista para compartir. Recuerda que puedes revocarla creando una nueva.", keyValue, expiresAtMillis);
+        return new ShareKeyResult(true, "Llave creada y lista para compartir. Recuerda que puedes revocarla creando una nueva.", keyValue, expiresAt);
     }
 
     private String resolveUserId(String email, String phone) {
@@ -138,13 +140,13 @@ public class InMemoryAuthRepository implements AuthRepository {
     private static class ShareKey {
         final String keyValue;
         final String label;
-        final long expiresAtMillis;
+        final Instant expiresAt;
         final String ownerId;
 
-        ShareKey(String keyValue, String label, long expiresAtMillis, String ownerId) {
+        ShareKey(String keyValue, String label, Instant expiresAt, String ownerId) {
             this.keyValue = keyValue;
             this.label = label;
-            this.expiresAtMillis = expiresAtMillis;
+            this.expiresAt = expiresAt;
             this.ownerId = ownerId;
         }
     }

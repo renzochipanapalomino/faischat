@@ -33,9 +33,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
         isCoreLibraryDesugaringEnabled = true
     }
-    buildFeatures {
-        buildConfig = true
-    }
 }
 
 dependencies {

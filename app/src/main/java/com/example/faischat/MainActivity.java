@@ -15,29 +15,27 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.faischat.BuildConfig;
 import com.example.faischat.data.AuthRepository;
 import com.example.faischat.data.InMemoryAuthRepository;
-import com.example.faischat.data.SupabaseClient;
 import com.example.faischat.model.RegistrationResult;
 import com.example.faischat.model.ShareKeyResult;
 import com.example.faischat.model.UserRegistration;
 import com.example.faischat.model.UserRole;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private final AuthRepository authRepository = new InMemoryAuthRepository();
-    private SupabaseClient supabaseClient;
 
     private TextInputEditText nameInput;
     private TextInputEditText emailInput;
     private TextInputEditText phoneInput;
-    private TextInputEditText passwordInput;
     private TextInputEditText partnerNameInput;
     private TextInputEditText partnerPhoneInput;
     private TextInputEditText keyLabelInput;
@@ -45,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup roleGroup;
     private View partnerSection;
     private TextView registrationStatus;
-    private TextView supabaseStatus;
     private TextView keyStatus;
 
     @Override
@@ -60,11 +57,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         bindViews();
-        supabaseClient = new SupabaseClient(
-                BuildConfig.SUPABASE_URL,
-                BuildConfig.SUPABASE_ANON_KEY,
-                BuildConfig.SUPABASE_DB_PASSWORD
-        );
         setupRoleSelection();
         setupActions();
     }
@@ -73,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         nameInput = findViewById(R.id.input_name);
         emailInput = findViewById(R.id.input_email);
         phoneInput = findViewById(R.id.input_phone);
-        passwordInput = findViewById(R.id.input_password);
         partnerNameInput = findViewById(R.id.input_partner_name);
         partnerPhoneInput = findViewById(R.id.input_partner_phone);
         keyLabelInput = findViewById(R.id.input_key_label);
@@ -81,12 +72,7 @@ public class MainActivity extends AppCompatActivity {
         roleGroup = findViewById(R.id.role_group);
         partnerSection = findViewById(R.id.partner_section);
         registrationStatus = findViewById(R.id.registration_status);
-        supabaseStatus = findViewById(R.id.supabase_status);
         keyStatus = findViewById(R.id.key_status);
-
-        if (passwordInput != null && TextUtils.isEmpty(safeText(passwordInput))) {
-            passwordInput.setText(BuildConfig.SUPABASE_DB_PASSWORD);
-        }
     }
 
     private void setupRoleSelection() {
@@ -112,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         String name = safeText(nameInput);
         String email = safeText(emailInput);
         String phone = safeText(phoneInput);
-        String password = safeText(passwordInput);
         String partnerName = safeText(partnerNameInput);
         String partnerPhone = safeText(partnerPhoneInput);
 
@@ -127,10 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
         RegistrationResult result = authRepository.registerUser(registration);
         showRegistrationFeedback(result);
-
-        if (result.isSuccess()) {
-            syncWithSupabase(email, password);
-        }
     }
 
     private void handleKeyGeneration() {
@@ -139,9 +120,9 @@ public class MainActivity extends AppCompatActivity {
         String keyLabel = safeText(keyLabelInput);
         String durationText = safeText(keyDurationInput);
 
-        long durationMinutes = parseDurationMinutes(durationText);
+        Duration duration = parseDuration(durationText);
         String ownerId = resolveUserId(email, phone);
-        ShareKeyResult shareKeyResult = authRepository.generateShareKey(ownerId, keyLabel, durationMinutes);
+        ShareKeyResult shareKeyResult = authRepository.generateShareKey(ownerId, keyLabel, duration);
         showKeyFeedback(shareKeyResult);
     }
 
@@ -164,18 +145,18 @@ public class MainActivity extends AppCompatActivity {
         String feedback = result.getMessage();
         if (result.isSuccess()) {
             feedback += "\nCódigo: " + result.getKeyValue();
-            feedback += formatExpiration(result.getExpiresAtMillis());
+            feedback += formatExpiration(result.getExpiresAt());
         }
         keyStatus.setText(feedback);
     }
 
-    private String formatExpiration(long expiresAtMillis) {
-        if (expiresAtMillis <= 0) {
+    private String formatExpiration(Instant expiresAt) {
+        if (expiresAt == null) {
             return "";
         }
-        Date date = new Date(expiresAtMillis);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault());
-        return "\nExpira: " + formatter.format(date);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm", Locale.getDefault())
+                .withZone(ZoneId.systemDefault());
+        return "\nExpira: " + formatter.format(expiresAt);
     }
 
     private void updatePartnerVisibility(boolean visible) {
@@ -189,33 +170,6 @@ public class MainActivity extends AppCompatActivity {
             return UserRole.UNICORNIO;
         }
         return UserRole.SINGLER;
-    }
-
-    private void syncWithSupabase(String email, String password) {
-        if (supabaseStatus == null) {
-            return;
-        }
-        if (TextUtils.isEmpty(email)) {
-            supabaseStatus.setText("Para sincronizar con Supabase agrega un correo.");
-            supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
-            return;
-        }
-        supabaseStatus.setText("Sincronizando con Supabase...");
-        supabaseStatus.setTextColor(ContextCompat.getColor(this, com.google.android.material.R.color.design_default_color_primary));
-
-        supabaseClient.signUpOrLogin(email, password, new SupabaseClient.SupabaseCallback() {
-            @Override
-            public void onSuccess(String message) {
-                supabaseStatus.setText(message);
-                supabaseStatus.setTextColor(ContextCompat.getColor(MainActivity.this, com.google.android.material.R.color.design_default_color_primary));
-            }
-
-            @Override
-            public void onError(String message) {
-                supabaseStatus.setText(message);
-                supabaseStatus.setTextColor(ContextCompat.getColor(MainActivity.this, android.R.color.holo_red_dark));
-            }
-        });
     }
 
     private String safeText(TextInputEditText editText) {
@@ -235,15 +189,18 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    private long parseDurationMinutes(String durationText) {
+    private Duration parseDuration(String durationText) {
         if (TextUtils.isEmpty(durationText)) {
-            return 0;
+            return null;
         }
         try {
             long minutes = Long.parseLong(durationText);
-            return Math.max(minutes, 0);
+            if (minutes <= 0) {
+                return null;
+            }
+            return Duration.ofMinutes(minutes);
         } catch (NumberFormatException e) {
-            return 0;
+            return null;
         }
     }
 }

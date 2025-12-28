@@ -4,19 +4,34 @@ plugins {
 
 android {
     namespace = "com.example.faischat"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.faischat"
-        minSdk = 21
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = 23
+        targetSdk = 35
+        versionCode = 2
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "SUPABASE_URL", "\"https://tu-proyecto.supabase.co\"")
-        buildConfigField("String", "SUPABASE_ANON_KEY", "\"TU_ANON_KEY\"")
-        buildConfigField("String", "SUPABASE_DB_PASSWORD", "\"SUPABASE.2026\"")
+        buildConfigField(
+            "String",
+            "SUPABASE_URL",
+            "\"https://alvpwddnpiondhwxvffo.supabase.co\""
+        )
+
+        buildConfigField(
+            "String",
+            "SUPABASE_ANON_KEY",
+            "\"sb_publishable_rXyHi8ZzzTDN3GHYrtjSdA_o0LjYN8Y\""
+        )
+
+        buildConfigField(
+            "String",
+            "SUPABASE_DB_PASSWORD",
+            "\"SUPABASE.2026\""
+        )
+
     }
 
     buildFeatures {

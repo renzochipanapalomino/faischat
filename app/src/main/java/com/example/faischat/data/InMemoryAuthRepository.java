@@ -66,6 +66,9 @@ public class InMemoryAuthRepository implements AuthRepository {
     }
 
     @Override
+    public ShareKeyResult generateShareKey(String ownerId, String label, long durationMinutes) {
+        if (TextUtils.isEmpty(ownerId)) {
+            return new ShareKeyResult(false, "Primero registra o selecciona la cuenta (correo o teléfono).", null, 0);
     public ShareKeyResult generateShareKey(String ownerId, String label, Duration duration) {
         if (TextUtils.isEmpty(ownerId)) {
             return new ShareKeyResult(false, "Primero registra o selecciona la cuenta (correo o teléfono).", null, null);
@@ -73,6 +76,23 @@ public class InMemoryAuthRepository implements AuthRepository {
 
         RegisteredUser owner = USERS.get(ownerId);
         if (owner == null) {
+            return new ShareKeyResult(false, "No encontramos la cuenta. Regístrate antes de generar llaves.", null, 0);
+        }
+
+        if (TextUtils.isEmpty(label)) {
+            return new ShareKeyResult(false, "Asigna un nombre a la llave para saber quién tiene acceso.", null, 0);
+        }
+
+        if (durationMinutes <= 0) {
+            return new ShareKeyResult(false, "Define una duración mayor a cero minutos.", null, 0);
+        }
+
+        String keyValue = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        long expiresAtMillis = System.currentTimeMillis() + durationMinutes * 60 * 1000;
+        ShareKey shareKey = new ShareKey(keyValue, label.trim(), expiresAtMillis, ownerId);
+        SHARE_KEYS.put(ownerId, shareKey);
+
+        return new ShareKeyResult(true, "Llave creada y lista para compartir. Recuerda que puedes revocarla creando una nueva.", keyValue, expiresAtMillis);
             return new ShareKeyResult(false, "No encontramos la cuenta. Regístrate antes de generar llaves.", null, null);
         }
 
@@ -140,6 +160,13 @@ public class InMemoryAuthRepository implements AuthRepository {
     private static class ShareKey {
         final String keyValue;
         final String label;
+        final long expiresAtMillis;
+        final String ownerId;
+
+        ShareKey(String keyValue, String label, long expiresAtMillis, String ownerId) {
+            this.keyValue = keyValue;
+            this.label = label;
+            this.expiresAtMillis = expiresAtMillis;
         final Instant expiresAt;
         final String ownerId;
 

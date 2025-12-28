@@ -10,5 +10,6 @@ public interface AuthRepository {
 
     RegistrationResult registerUser(UserRegistration registration);
 
+    ShareKeyResult generateShareKey(String ownerId, String label, long durationMinutes);
     ShareKeyResult generateShareKey(String ownerId, String label, Duration duration);
 }

@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">faischat</string>
+    <string name="login_title">Ingreso y registro seguro</string>
+    <string name="login_subtitle">Conecta parejas SW, unicornios y singler con validación y llaves temporales.</string>
+    <string name="field_name">Nombre visible</string>
+    <string name="field_email">Correo (Gmail)</string>
+    <string name="field_phone">Teléfono</string>
+    <string name="role_label">Elige tu rol</string>
+    <string name="role_couple">Pareja SW</string>
+    <string name="role_unicorn">Unicornio (mujer sola)</string>
+    <string name="role_single">Singler (hombre solo)</string>
+    <string name="partner_header">Vincula a tu pareja</string>
+    <string name="partner_subtitle">Para activar el rol de pareja, debe existir la otra persona con los mismos datos.</string>
+    <string name="field_partner_name">Nombre de tu pareja</string>
+    <string name="field_partner_phone">Teléfono de tu pareja</string>
+    <string name="button_register">Registrar / Vincular</string>
+    <string name="button_google">Continuar con Google</string>
+    <string name="or">o</string>
 </resources>

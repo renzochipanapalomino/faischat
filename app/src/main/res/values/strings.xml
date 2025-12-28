@@ -16,4 +16,9 @@
     <string name="button_register">Registrar / Vincular</string>
     <string name="button_google">Continuar con Google</string>
     <string name="or">o</string>
+    <string name="key_header">Generar llave temporal</string>
+    <string name="key_subtitle">Crea un código que puedas revocar y define su duración en minutos.</string>
+    <string name="field_key_label">Nombre de la llave</string>
+    <string name="field_key_duration">Duración (minutos)</string>
+    <string name="button_generate_key">Crear llave</string>
 </resources>

@@ -19,6 +19,10 @@ android {
         buildConfigField("String", "SUPABASE_DB_PASSWORD", "\"SUPABASE.2026\"")
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -32,9 +36,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
         isCoreLibraryDesugaringEnabled = true
-    }
-    buildFeatures {
-        buildConfig = true
     }
 }
 

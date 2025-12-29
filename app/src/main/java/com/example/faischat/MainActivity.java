@@ -112,7 +112,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupActions() {
         Button registerButton = findViewById(R.id.button_register);
-        registerButton.setOnClickListener(v -> handleRegistration());
+        if (registerButton != null) {
+            registerButton.setOnClickListener(v -> handleRegistration());
+        }
     }
 
     private void handleRegistration() {
@@ -144,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showRegistrationFeedback(RegistrationResult result) {
+        if (registrationStatus == null) return;
         int color = result.isSuccess()
                 ? com.google.android.material.R.color.design_default_color_primary
                 : android.R.color.holo_red_dark;

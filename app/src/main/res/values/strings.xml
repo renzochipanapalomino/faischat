@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">faischat</string>
-    <string name="login_title">Ingreso y registro seguro</string>
-    <string name="login_subtitle">Conecta parejas SW, unicornios y singler con validación y llaves temporales.</string>
+    <string name="app_name">Faischat</string>
+    <string name="login_title">Faischat</string>
+    <string name="login_subtitle">Conexiones Seguras &amp; Discretas</string>
     <string name="field_name">Nombre visible</string>
     <string name="field_email">Correo (Gmail)</string>
     <string name="field_phone">Teléfono</string>

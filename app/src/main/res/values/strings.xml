@@ -13,6 +13,7 @@
     <string name="partner_subtitle">Para activar el rol de pareja, debe existir la otra persona con los mismos datos.</string>
     <string name="field_partner_name">Nombre de tu pareja</string>
     <string name="field_partner_phone">Teléfono de tu pareja</string>
+    <string name="password">Contraseña</string>
     <string name="button_register">Registrar / Vincular</string>
     <string name="button_google">Continuar con Google</string>
     <string name="or">o</string>

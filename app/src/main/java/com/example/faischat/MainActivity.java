@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -22,9 +20,13 @@ import com.example.faischat.model.RegistrationResult;
 import com.example.faischat.model.ShareKeyResult;
 import com.example.faischat.model.UserRegistration;
 import com.example.faischat.model.UserRole;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.Objects;
 import java.time.Duration;
+import android.text.InputFilter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,10 +45,11 @@ public class MainActivity extends AppCompatActivity {
     private TextInputEditText nameInput;
     private TextInputEditText emailInput;
     private TextInputEditText phoneInput;
+    private TextInputEditText passwordInput;
     private TextInputEditText partnerNameInput;
     private TextInputEditText partnerPhoneInput;
 
-    private RadioGroup roleGroup;
+    private MaterialButtonToggleGroup roleGroup;
     private View partnerSection;
 
     private TextView registrationStatus;
@@ -66,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         bindViews();
         setupRoleSelection();
+        setupPhoneLengthLimits();
         setupActions();
         updateSupabaseStatus();
     }
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         nameInput = findViewById(R.id.input_name);
         emailInput = findViewById(R.id.input_email);
         phoneInput = findViewById(R.id.input_phone);
+        passwordInput = findViewById(R.id.input_password);
         partnerNameInput = findViewById(R.id.input_partner_name);
         partnerPhoneInput = findViewById(R.id.input_partner_phone);
 
@@ -85,13 +90,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupRoleSelection() {
-        roleGroup.setOnCheckedChangeListener((group, checkedId) -> {
+        roleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) return;
             UserRole role = resolveRoleFromId(checkedId);
             updatePartnerVisibility(role == UserRole.PAREJA_SW);
         });
 
-        ((RadioButton) findViewById(R.id.role_couple)).setChecked(true);
+        roleGroup.check(R.id.role_couple);
         updatePartnerVisibility(true);
+    }
+
+    private void setupPhoneLengthLimits() {
+        InputFilter[] phoneFilters = new InputFilter[]{new InputFilter.LengthFilter(9)};
+        if (phoneInput != null) {
+            phoneInput.setFilters(phoneFilters);
+        }
+        if (partnerPhoneInput != null) {
+            partnerPhoneInput.setFilters(phoneFilters);
+        }
     }
 
     private void setupActions() {
@@ -106,10 +122,21 @@ public class MainActivity extends AppCompatActivity {
                 safeText(nameInput),
                 safeText(emailInput),
                 safeText(phoneInput),
+                safeText(passwordInput),
                 safeText(partnerNameInput),
                 safeText(partnerPhoneInput),
                 role
         );
+
+        if (!isValidPhone(registration.getPhone())) {
+            showError(getString(R.string.error_phone_length));
+            return;
+        }
+
+        if (!TextUtils.isEmpty(registration.getPartnerPhone()) && !isValidPhone(registration.getPartnerPhone())) {
+            showError(getString(R.string.error_partner_phone_length));
+            return;
+        }
 
         RegistrationResult result = authRepository.registerUser(registration);
         showRegistrationFeedback(result);

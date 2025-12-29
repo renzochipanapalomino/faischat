@@ -13,6 +13,7 @@
     <string name="partner_subtitle">Para activar el rol de pareja, debe existir la otra persona con los mismos datos.</string>
     <string name="field_partner_name">Nombre de tu pareja</string>
     <string name="field_partner_phone">Teléfono de tu pareja</string>
+    <string name="password">Contraseña</string>
     <string name="button_register">Registrar / Vincular</string>
     <string name="button_google">Continuar con Google</string>
     <string name="or">o</string>
@@ -21,4 +22,18 @@
     <string name="field_key_label">Nombre de la llave</string>
     <string name="field_key_duration">Duración (minutos)</string>
     <string name="button_generate_key">Crear llave</string>
+    <string name="supabase_ready">Supabase listo. Se creará la cuenta remota al registrar.</string>
+    <string name="supabase_not_configured">Configura SUPABASE_URL y SUPABASE_ANON_KEY en BuildConfig para crear la cuenta en Supabase.</string>
+    <string name="supabase_missing_email">Agrega un correo para registrar al usuario en Supabase.</string>
+    <string name="supabase_missing_password_user">Agrega una contraseña para completar el registro en Supabase.</string>
+    <string name="supabase_creating">Creando cuenta en Supabase…</string>
+    <string name="role_prompt">¿Quién eres hoy?</string>
+    <string name="role_couple_label">👫 Pareja</string>
+    <string name="role_unicorn_label">🦄 Unicornio</string>
+    <string name="role_single_label">🦁 Singler</string>
+    <string name="partner_section_hint">Datos de tu pareja para vinculación</string>
+    <string name="button_register_cta">Registrarme</string>
+    <string name="already_account">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="error_phone_length">El teléfono debe tener 9 dígitos.</string>
+    <string name="error_partner_phone_length">El teléfono de tu pareja debe tener 9 dígitos.</string>
 </resources>

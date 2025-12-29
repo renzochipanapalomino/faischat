@@ -73,7 +73,7 @@ public class SupabaseClient {
 
                 Response response = httpClient.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    runOnMain(() -> callback.onSuccess("Cuenta creada en Supabase. Puedes usar la misma contraseña: " + dbPassword));
+                    runOnMain(() -> callback.onSuccess("Cuenta creada en Supabase."));
                 } else {
                     String body = response.body() != null ? response.body().string() : "";
                     String message = "Supabase respondió " + response.code() + ": " + body;

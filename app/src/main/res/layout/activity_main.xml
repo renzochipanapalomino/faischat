@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_background"
+    android:background="@color/night_bg"
     android:fillViewport="true"
     tools:context=".MainActivity">
 
@@ -16,457 +16,164 @@
         android:padding="24dp"
         android:paddingTop="32dp"
         android:paddingBottom="32dp">
-        android:padding="24dp">
 
         <TextView
             android:id="@+id/header_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/login_title"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall"
-            android:textStyle="bold"
-            android:textColor="@color/teal_900" />
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textAppearance="?attr/textAppearanceHeadlineLarge"
+            android:textColor="@color/accent_orange"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/header_subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:layout_marginTop="4dp"
             android:text="@string/login_subtitle"
             android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="@color/teal_700" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/card_bg"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:strokeColor="@color/teal_200"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/name_layout"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/field_name">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/input_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:imeOptions="actionNext"
-                        android:inputType="textPersonName" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/email_layout"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="@string/field_email">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/input_email"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:imeOptions="actionNext"
-                        android:inputType="textEmailAddress" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/phone_layout"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="@string/field_phone">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/input_phone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:imeOptions="actionNext"
-                        android:inputType="phone" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    android:id="@+id/role_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/role_label"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
-                    android:textColor="@color/teal_900" />
-
-                <RadioGroup
-                    android:id="@+id/role_group"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp">
-
-                    <RadioButton
-                        android:id="@+id/role_couple"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/role_couple" />
-
-                    <RadioButton
-                        android:id="@+id/role_unicorn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/role_unicorn" />
-
-                    <RadioButton
-                        android:id="@+id/role_single"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/role_single" />
-                </RadioGroup>
-
-                <LinearLayout
-                    android:id="@+id/partner_section"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/partner_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/partner_header"
-                        android:textAppearance="?attr/textAppearanceTitleSmall"
-                        android:textColor="@color/teal_900"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/partner_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/partner_subtitle"
-                        android:textAppearance="?attr/textAppearanceBodyMedium"
-                        android:textColor="@color/teal_700" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/partner_name_layout"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="@string/field_partner_name">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/input_partner_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:imeOptions="actionNext"
-                            android:inputType="textPersonName" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/partner_phone_layout"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="@string/field_partner_phone">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/input_partner_phone"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:imeOptions="actionDone"
-                            android:inputType="phone" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_register"
-                    style="@style/Widget.Material3.Button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/button_register"
-                    android:textAllCaps="false"
-                    app:cornerRadius="12dp"
-                    app:icon="@drawable/ic_lock"
-                    app:iconGravity="textStart"
-                    app:iconTint="@color/white"
-                    app:rippleColor="@color/teal_100" />
-
-                <TextView
-                    android:id="@+id/registration_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:textColor="@color/teal_900" />
-
-                <TextView
-                    android:id="@+id/supabase_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:textColor="@color/teal_700" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/or"
-            android:textAlignment="center"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="@color/teal_900" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_google"
-            style="@style/Widget.Material3.Button.ElevatedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/button_google"
-            android:textAllCaps="false"
-            app:cornerRadius="12dp"
-            app:iconGravity="textStart"
-            app:iconTint="@color/teal_900"
-            app:rippleColor="@color/teal_100" />
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/name_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="@string/field_name">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/email_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="@string/field_email">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/phone_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="@string/field_phone">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_phone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="phone" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:textColor="@color/text_secondary" />
 
         <TextView
             android:id="@+id/role_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/role_label"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
+            android:layout_marginTop="20dp"
+            android:text="@string/role_prompt"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold" />
 
-        <RadioGroup
+        <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/role_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="12dp"
+            app:checkedButton="@id/role_couple"
+            app:singleSelection="true"
+            app:selectionRequired="true">
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/role_couple"
-                android:layout_width="wrap_content"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/role_couple" />
+                android:layout_marginVertical="6dp"
+                android:text="@string/role_couple_label"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="@color/role_button_text"
+                app:cornerRadius="18dp"
+                app:iconGravity="textStart"
+                app:strokeColor="@color/role_button_stroke"
+                app:strokeWidth="1dp"
+                app:backgroundTint="@color/role_button_bg" />
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/role_unicorn"
-                android:layout_width="wrap_content"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/role_unicorn" />
+                android:layout_marginVertical="6dp"
+                android:text="@string/role_unicorn_label"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="@color/role_button_text"
+                app:cornerRadius="18dp"
+                app:iconGravity="textStart"
+                app:strokeColor="@color/role_button_stroke"
+                app:strokeWidth="1dp"
+                app:backgroundTint="@color/role_button_bg" />
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/role_single"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/role_single" />
-        </RadioGroup>
-
-        <LinearLayout
-            android:id="@+id/partner_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/partner_title"
+                style="@style/Widget.Material3.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/partner_header"
-                android:textAppearance="?attr/textAppearanceTitleSmall"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/partner_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/partner_subtitle"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/partner_name_layout"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="@string/field_partner_name">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/input_partner_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="actionNext"
-                    android:inputType="textPersonName" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/partner_phone_layout"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="@string/field_partner_phone">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/input_partner_phone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
-                    android:inputType="phone" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/button_register"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/button_register" />
-
-        <TextView
-            android:id="@+id/registration_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
+                android:layout_marginVertical="6dp"
+                android:text="@string/role_single_label"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="@color/role_button_text"
+                app:cornerRadius="18dp"
+                app:iconGravity="textStart"
+                app:strokeColor="@color/role_button_stroke"
+                app:strokeWidth="1dp"
+                app:backgroundTint="@color/role_button_bg" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginVertical="20dp"
-            android:background="?android:attr/listDivider" />
-
-        <TextView
-            android:id="@+id/key_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/key_header"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/key_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/key_subtitle"
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/key_label_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="@string/field_key_label">
+            android:background="@color/role_button_stroke" />
+
+        <TextView
+            android:id="@+id/footer_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/already_account"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="@color/text_secondary" />
+
+        <!-- Hidden form stub to keep IDs for code references; stays off-screen on this screen -->
+        <LinearLayout
+            android:id="@+id/hidden_form_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_key_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/key_duration_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="@string/field_key_duration">
-
+                android:id="@+id/input_name"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_key_duration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:id="@+id/input_email"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_phone"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_password"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_partner_name"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_partner_phone"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
 
-        <Button
-            android:id="@+id/button_generate_key"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="@string/button_generate_key" />
+            <View
+                android:id="@+id/partner_section"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
 
-        <TextView
-            android:id="@+id/key_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
+            <TextView
+                android:id="@+id/registration_status"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+
+            <TextView
+                android:id="@+id/supabase_status"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+
+            <Button
+                android:id="@+id/button_register"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+        </LinearLayout>
 
     </LinearLayout>
 

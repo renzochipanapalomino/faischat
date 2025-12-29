@@ -29,12 +29,10 @@ public class SupabaseClient {
 
     private final String supabaseUrl;
     private final String anonKey;
-    private final String dbPassword;
 
-    public SupabaseClient(@NonNull String supabaseUrl, @NonNull String anonKey, @NonNull String dbPassword) {
+    public SupabaseClient(@NonNull String supabaseUrl, @NonNull String anonKey) {
         this.supabaseUrl = supabaseUrl;
         this.anonKey = anonKey;
-        this.dbPassword = dbPassword;
     }
 
     public boolean isConfigured() {
@@ -42,10 +40,6 @@ public class SupabaseClient {
                 && !supabaseUrl.contains("tu-proyecto")
                 && !TextUtils.isEmpty(anonKey)
                 && !anonKey.contains("TU_ANON_KEY");
-    }
-
-    public String getDbPassword() {
-        return dbPassword;
     }
 
     public void signUpOrLogin(String email, String password, SupabaseCallback callback) {
@@ -73,7 +67,7 @@ public class SupabaseClient {
 
                 Response response = httpClient.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    runOnMain(() -> callback.onSuccess("Cuenta creada en Supabase. Puedes usar la misma contraseña: " + dbPassword));
+                    runOnMain(() -> callback.onSuccess("Cuenta creada en Supabase."));
                 } else {
                     String body = response.body() != null ? response.body().string() : "";
                     String message = "Supabase respondió " + response.code() + ": " + body;

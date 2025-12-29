@@ -7,4 +7,12 @@
     <color name="teal_200">#A1D6E2</color>
     <color name="teal_100">#D7F5F9</color>
     <color name="card_bg">#FDFEFE</color>
+    <color name="night_bg">#111118</color>
+    <color name="panel_bg">#191923</color>
+    <color name="accent_pink">#F5395B</color>
+    <color name="accent_orange">#FF7A32</color>
+    <color name="text_primary">#F5F6FA</color>
+    <color name="text_secondary">#B6B7C5</color>
+    <color name="input_bg">#242434</color>
+    <color name="role_button_stroke">#2C2C38</color>
 </resources>

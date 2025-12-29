@@ -1,6 +1,7 @@
 package com.example.faischat;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -14,6 +15,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.faischat.data.SupabaseClient;
 import com.example.faischat.data.AuthRepository;
 import com.example.faischat.data.inMemoryAuthRepository;
 import com.example.faischat.model.RegistrationResult;
@@ -26,6 +28,11 @@ import java.time.Duration;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final SupabaseClient supabaseClient = new SupabaseClient(
+            BuildConfig.SUPABASE_URL,
+            BuildConfig.SUPABASE_ANON_KEY,
+            BuildConfig.SUPABASE_DB_PASSWORD
+    );
     private final AuthRepository authRepository = new inMemoryAuthRepository() {
         @Override
         public ShareKeyResult generateShareKey(String ownerId, String label, Duration duration) {
@@ -43,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private View partnerSection;
 
     private TextView registrationStatus;
+    private TextView supabaseStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         bindViews();
         setupRoleSelection();
         setupActions();
+        updateSupabaseStatus();
     }
 
     private void bindViews() {
@@ -72,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         partnerSection = findViewById(R.id.partner_section);
 
         registrationStatus = findViewById(R.id.registration_status);
+        supabaseStatus = findViewById(R.id.supabase_status);
     }
 
     private void setupRoleSelection() {
@@ -103,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         RegistrationResult result = authRepository.registerUser(registration);
         showRegistrationFeedback(result);
+        syncWithSupabase(registration);
     }
 
     private void showRegistrationFeedback(RegistrationResult result) {
@@ -116,6 +127,62 @@ public class MainActivity extends AppCompatActivity {
 
     private void updatePartnerVisibility(boolean visible) {
         partnerSection.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    private void updateSupabaseStatus() {
+        if (supabaseStatus == null) return;
+
+        if (supabaseClient.isConfigured()) {
+            supabaseStatus.setTextColor(ContextCompat.getColor(this, R.color.teal_700));
+            supabaseStatus.setText(getString(R.string.supabase_ready));
+        } else {
+            supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+            supabaseStatus.setText(getString(R.string.supabase_not_configured));
+        }
+    }
+
+    private void syncWithSupabase(UserRegistration registration) {
+        if (supabaseStatus == null) return;
+
+        if (!supabaseClient.isConfigured()) {
+            supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+            supabaseStatus.setText(getString(R.string.supabase_not_configured));
+            return;
+        }
+
+        if (TextUtils.isEmpty(registration.getEmail())) {
+            supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+            supabaseStatus.setText(getString(R.string.supabase_missing_email));
+            return;
+        }
+
+        String supabasePassword = supabaseClient.getDbPassword();
+        if (TextUtils.isEmpty(supabasePassword)) {
+            supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+            supabaseStatus.setText(getString(R.string.supabase_missing_password));
+            return;
+        }
+
+        supabaseStatus.setTextColor(ContextCompat.getColor(this, R.color.teal_700));
+        supabaseStatus.setText(getString(R.string.supabase_creating));
+
+        supabaseClient.signUpOrLogin(
+                registration.getEmail(),
+                supabasePassword,
+                new SupabaseClient.SupabaseCallback() {
+                    @Override
+                    public void onSuccess(String message) {
+                        supabaseStatus.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.teal_700));
+                        supabaseStatus.setText(message);
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        supabaseStatus.setTextColor(ContextCompat.getColor(MainActivity.this, android.R.color.holo_red_dark));
+                        supabaseStatus.setText(message);
+                    }
+                }
+        );
     }
 
     private UserRole resolveRoleFromId(int id) {

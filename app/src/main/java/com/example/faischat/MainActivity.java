@@ -32,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final SupabaseClient supabaseClient = new SupabaseClient(
             BuildConfig.SUPABASE_URL,
-            BuildConfig.SUPABASE_ANON_KEY
+            BuildConfig.SUPABASE_ANON_KEY,
+            BuildConfig.SUPABASE_DB_PASSWORD
     );
     private final AuthRepository authRepository = new inMemoryAuthRepository() {
         @Override
@@ -144,10 +145,6 @@ public class MainActivity extends AppCompatActivity {
         syncWithSupabase(registration);
     }
 
-    private boolean isValidPhone(String phone) {
-        return !TextUtils.isEmpty(phone) && phone.length() == 9;
-    }
-
     private void showRegistrationFeedback(RegistrationResult result) {
         if (registrationStatus == null) return;
         int color = result.isSuccess()
@@ -189,9 +186,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (TextUtils.isEmpty(registration.getPassword())) {
+        String supabasePassword = supabaseClient.getDbPassword();
+        if (TextUtils.isEmpty(supabasePassword)) {
             supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
-            supabaseStatus.setText(getString(R.string.supabase_missing_password_user));
+            supabaseStatus.setText(getString(R.string.supabase_missing_password));
             return;
         }
 
@@ -200,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
 
         supabaseClient.signUpOrLogin(
                 registration.getEmail(),
-                registration.getPassword(),
+                supabasePassword,
                 new SupabaseClient.SupabaseCallback() {
                     @Override
                     public void onSuccess(String message) {
@@ -226,10 +224,5 @@ public class MainActivity extends AppCompatActivity {
     private String safeText(TextInputEditText editText) {
         if (editText == null || editText.getText() == null) return "";
         return editText.getText().toString().trim();
-    }
-
-    private void showError(String message) {
-        registrationStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
-        registrationStatus.setText(message);
     }
 }

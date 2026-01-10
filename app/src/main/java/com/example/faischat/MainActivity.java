@@ -1,6 +1,7 @@
 package com.example.faischat;
 
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -13,8 +14,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.faischat.data.SupabaseClient;
 import com.example.faischat.data.AuthRepository;
+import com.example.faischat.data.inMemoryAuthRepository;
+import com.example.faischat.data.SupabaseClient;
 import com.example.faischat.data.inMemoryAuthRepository;
 import com.example.faischat.model.RegistrationResult;
 import com.example.faischat.model.ShareKeyResult;
@@ -24,7 +26,6 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.time.Duration;
-import android.text.InputFilter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
             BuildConfig.SUPABASE_ANON_KEY,
             BuildConfig.SUPABASE_DB_PASSWORD
     );
+
     private final AuthRepository authRepository = new inMemoryAuthRepository() {
         @Override
         public ShareKeyResult generateShareKey(String ownerId, String label, Duration duration) {
@@ -40,18 +42,10 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private TextInputEditText nameInput;
-    private TextInputEditText emailInput;
-    private TextInputEditText phoneInput;
-    private TextInputEditText passwordInput;
-    private TextInputEditText partnerNameInput;
-    private TextInputEditText partnerPhoneInput;
-
+    private TextInputEditText nameInput, emailInput, phoneInput, passwordInput, partnerNameInput, partnerPhoneInput;
     private MaterialButtonToggleGroup roleGroup;
     private View partnerSection;
-
-    private TextView registrationStatus;
-    private TextView supabaseStatus;
+    private TextView registrationStatus, supabaseStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +53,14 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        View mainView = findViewById(R.id.main);
+        if (mainView != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(mainView, (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                return insets;
+            });
+        }
 
         bindViews();
         setupRoleSelection();
@@ -79,74 +76,62 @@ public class MainActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.input_password);
         partnerNameInput = findViewById(R.id.input_partner_name);
         partnerPhoneInput = findViewById(R.id.input_partner_phone);
-
         roleGroup = findViewById(R.id.role_group);
         partnerSection = findViewById(R.id.partner_section);
-
         registrationStatus = findViewById(R.id.registration_status);
         supabaseStatus = findViewById(R.id.supabase_status);
     }
 
     private void setupRoleSelection() {
-        roleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            if (!isChecked) return;
-            UserRole role = resolveRoleFromId(checkedId);
-            updatePartnerVisibility(role == UserRole.PAREJA_SW);
-        });
-
-        roleGroup.check(R.id.role_couple);
-        updatePartnerVisibility(true);
+        if (roleGroup != null) {
+            roleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+                if (!isChecked) return;
+                UserRole role = resolveRoleFromId(checkedId);
+                updatePartnerVisibility(role == UserRole.PAREJA_SW);
+            });
+            roleGroup.check(R.id.role_couple);
+        }
     }
 
     private void setupPhoneLengthLimits() {
-        InputFilter[] phoneFilters = new InputFilter[]{new InputFilter.LengthFilter(9)};
-        if (phoneInput != null) {
-            phoneInput.setFilters(phoneFilters);
-        }
-        if (partnerPhoneInput != null) {
-            partnerPhoneInput.setFilters(phoneFilters);
-        }
+        InputFilter[] filters = new InputFilter[]{new InputFilter.LengthFilter(9)};
+        if (phoneInput != null) phoneInput.setFilters(filters);
+        if (partnerPhoneInput != null) partnerPhoneInput.setFilters(filters);
     }
 
     private void setupActions() {
         Button registerButton = findViewById(R.id.button_register);
-        registerButton.setOnClickListener(v -> handleRegistration());
+        if (registerButton != null) {
+            registerButton.setOnClickListener(v -> handleRegistration());
+        }
     }
 
     private void handleRegistration() {
-        UserRole role = resolveRoleFromId(roleGroup.getCheckedButtonId());
+        UserRole role = (roleGroup != null) ? resolveRoleFromId(roleGroup.getCheckedButtonId()) : UserRole.SINGLER;
 
         UserRegistration registration = new UserRegistration(
-                safeText(nameInput),
-                safeText(emailInput),
-                safeText(phoneInput),
-                safeText(passwordInput),
-                safeText(partnerNameInput),
-                safeText(partnerPhoneInput),
+                safeText(nameInput), safeText(emailInput), safeText(phoneInput),
+                safeText(passwordInput), safeText(partnerNameInput), safeText(partnerPhoneInput),
                 role
         );
 
         if (!isValidPhone(registration.getPhone())) {
-            showError(getString(R.string.error_phone_length));
-            return;
-        }
-
-        if (!TextUtils.isEmpty(registration.getPartnerPhone()) && !isValidPhone(registration.getPartnerPhone())) {
-            showError(getString(R.string.error_partner_phone_length));
+            showError("El teléfono debe tener 9 dígitos");
             return;
         }
 
         RegistrationResult result = authRepository.registerUser(registration);
         showRegistrationFeedback(result);
-        syncWithSupabase(registration);
+
+        if (result.isSuccess()) {
+            syncWithSupabase(registration);
+        }
     }
 
     private void showRegistrationFeedback(RegistrationResult result) {
-        int color = result.isSuccess()
-                ? com.google.android.material.R.color.design_default_color_primary
-                : android.R.color.holo_red_dark;
-
-        registrationStatus.setTextColor(ContextCompat.getColor(this, color));
+        if (registrationStatus == null) return;
+        int colorRes = result.isSuccess() ? android.R.color.holo_green_dark : android.R.color.holo_red_dark;
+        registrationStatus.setTextColor(ContextCompat.getColor(this, colorRes));
         registrationStatus.setText(result.getMessage());
     }
 
@@ -157,63 +142,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updatePartnerVisibility(boolean visible) {
-        partnerSection.setVisibility(visible ? View.VISIBLE : View.GONE);
+        if (partnerSection != null) {
+            partnerSection.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void updateSupabaseStatus() {
         if (supabaseStatus == null) return;
-
         if (supabaseClient.isConfigured()) {
-            supabaseStatus.setTextColor(ContextCompat.getColor(this, R.color.teal_700));
-            supabaseStatus.setText(getString(R.string.supabase_ready));
+            supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_dark));
+            supabaseStatus.setText("Supabase: Listo");
         } else {
             supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
-            supabaseStatus.setText(getString(R.string.supabase_not_configured));
+            supabaseStatus.setText("Supabase: No configurado");
         }
     }
 
     private void syncWithSupabase(UserRegistration registration) {
-        if (supabaseStatus == null) return;
-
-        if (!supabaseClient.isConfigured()) {
-            supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
-            supabaseStatus.setText(getString(R.string.supabase_not_configured));
-            return;
-        }
-
-        if (TextUtils.isEmpty(registration.getEmail())) {
-            supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
-            supabaseStatus.setText(getString(R.string.supabase_missing_email));
-            return;
-        }
-
-        String supabasePassword = supabaseClient.getDbPassword();
-        if (TextUtils.isEmpty(supabasePassword)) {
-            supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
-            supabaseStatus.setText(getString(R.string.supabase_missing_password));
-            return;
-        }
-
-        supabaseStatus.setTextColor(ContextCompat.getColor(this, R.color.teal_700));
-        supabaseStatus.setText(getString(R.string.supabase_creating));
-
-        supabaseClient.signUpOrLogin(
-                registration.getEmail(),
-                supabasePassword,
-                new SupabaseClient.SupabaseCallback() {
-                    @Override
-                    public void onSuccess(String message) {
-                        supabaseStatus.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.teal_700));
-                        supabaseStatus.setText(message);
-                    }
-
-                    @Override
-                    public void onError(String message) {
-                        supabaseStatus.setTextColor(ContextCompat.getColor(MainActivity.this, android.R.color.holo_red_dark));
-                        supabaseStatus.setText(message);
-                    }
-                }
-        );
+        if (supabaseStatus == null || !supabaseClient.isConfigured()) return;
+        supabaseStatus.setText("Sincronizando...");
+        supabaseClient.signUp(registration.getEmail(), supabaseClient.getDbPassword(), new SupabaseClient.SupabaseCallback() {
+            @Override
+            public void onSuccess(String message) {
+                runOnUiThread(() -> {
+                    supabaseStatus.setTextColor(ContextCompat.getColor(MainActivity.this, android.R.color.holo_green_dark));
+                    supabaseStatus.setText(message);
+                });
+            }
+            @Override
+            public void onError(String message) {
+                runOnUiThread(() -> {
+                    supabaseStatus.setTextColor(ContextCompat.getColor(MainActivity.this, android.R.color.holo_red_dark));
+                    supabaseStatus.setText(message);
+                });
+            }
+        });
     }
 
     private UserRole resolveRoleFromId(int id) {
@@ -223,12 +186,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isValidPhone(String phone) {
-        if (TextUtils.isEmpty(phone)) return true;
-        return phone.matches("\\d{9}");
+        return !TextUtils.isEmpty(phone) && phone.length() == 9;
     }
 
     private String safeText(TextInputEditText editText) {
-        if (editText == null || editText.getText() == null) return "";
-        return editText.getText().toString().trim();
+        return (editText != null && editText.getText() != null) ? editText.getText().toString().trim() : "";
     }
 }

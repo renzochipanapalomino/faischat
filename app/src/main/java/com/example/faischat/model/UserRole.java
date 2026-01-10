@@ -2,15 +2,15 @@ package com.example.faischat.model;
 
 public enum UserRole {
     PAREJA_SW,
-    UNICORNIO,
+    MUJER,
     SINGLER;
 
     public String displayName() {
         switch (this) {
             case PAREJA_SW:
-                return "Pareja SW";
-            case UNICORNIO:
-                return "Unicornio";
+                return "Pareja";
+            case MUJER:
+                return "Mujer";
             case SINGLER:
             default:
                 return "Singler";

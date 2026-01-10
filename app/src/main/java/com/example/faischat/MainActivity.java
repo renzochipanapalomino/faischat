@@ -1,11 +1,11 @@
 package com.example.faischat;
 
 import android.os.Bundle;
-import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +15,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.faischat.data.AuthRepository;
-import com.example.faischat.data.inMemoryAuthRepository;
 import com.example.faischat.data.SupabaseClient;
 import com.example.faischat.data.inMemoryAuthRepository;
 import com.example.faischat.model.RegistrationResult;
@@ -42,10 +41,11 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private TextInputEditText nameInput, emailInput, phoneInput, passwordInput, partnerNameInput, partnerPhoneInput;
+    private TextInputEditText emailInput, passwordInput, partnerNameInput, partnerPhoneInput;
     private MaterialButtonToggleGroup roleGroup;
     private View partnerSection;
-    private TextView registrationStatus, supabaseStatus;
+    private TextView registrationStatus, supabaseStatus, forgotPasswordText;
+    private Button loginButton, registerButton, googleButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,15 +64,12 @@ public class MainActivity extends AppCompatActivity {
 
         bindViews();
         setupRoleSelection();
-        setupPhoneLengthLimits();
         setupActions();
         updateSupabaseStatus();
     }
 
     private void bindViews() {
-        nameInput = findViewById(R.id.input_name);
         emailInput = findViewById(R.id.input_email);
-        phoneInput = findViewById(R.id.input_phone);
         passwordInput = findViewById(R.id.input_password);
         partnerNameInput = findViewById(R.id.input_partner_name);
         partnerPhoneInput = findViewById(R.id.input_partner_phone);
@@ -80,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
         partnerSection = findViewById(R.id.partner_section);
         registrationStatus = findViewById(R.id.registration_status);
         supabaseStatus = findViewById(R.id.supabase_status);
+        forgotPasswordText = findViewById(R.id.text_forgot_password);
+        loginButton = findViewById(R.id.button_login);
+        registerButton = findViewById(R.id.button_register);
+        googleButton = findViewById(R.id.button_google);
     }
 
     private void setupRoleSelection() {
@@ -93,32 +94,47 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setupPhoneLengthLimits() {
-        InputFilter[] filters = new InputFilter[]{new InputFilter.LengthFilter(9)};
-        if (phoneInput != null) phoneInput.setFilters(filters);
-        if (partnerPhoneInput != null) partnerPhoneInput.setFilters(filters);
-    }
-
     private void setupActions() {
-        Button registerButton = findViewById(R.id.button_register);
+        if (loginButton != null) {
+            loginButton.setOnClickListener(v -> handleLogin());
+        }
         if (registerButton != null) {
             registerButton.setOnClickListener(v -> handleRegistration());
         }
+        if (googleButton != null) {
+            googleButton.setOnClickListener(v -> handleGoogleSignIn());
+        }
+        if (forgotPasswordText != null) {
+            forgotPasswordText.setOnClickListener(v -> {
+                Toast.makeText(MainActivity.this, R.string.forgot_password, Toast.LENGTH_SHORT).show();
+            });
+        }
+    }
+
+    private void handleLogin() {
+        String email = safeText(emailInput);
+        String password = safeText(passwordInput);
+
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            showError(getString(R.string.already_account)); // Usando un recurso existente para evitar hardcoding
+            return;
+        }
+        UserRole role = (roleGroup != null) ? resolveRoleFromId(roleGroup.getCheckedButtonId()) : UserRole.SINGLER;
+        showRegistrationFeedback(new RegistrationResult(true, "Acceso...", role, false));
     }
 
     private void handleRegistration() {
         UserRole role = (roleGroup != null) ? resolveRoleFromId(roleGroup.getCheckedButtonId()) : UserRole.SINGLER;
 
         UserRegistration registration = new UserRegistration(
-                safeText(nameInput), safeText(emailInput), safeText(phoneInput),
-                safeText(passwordInput), safeText(partnerNameInput), safeText(partnerPhoneInput),
+                "Usuario",
+                safeText(emailInput),
+                "000000000",
+                safeText(passwordInput),
+                safeText(partnerNameInput),
+                safeText(partnerPhoneInput),
                 role
         );
-
-        if (!isValidPhone(registration.getPhone())) {
-            showError("El teléfono debe tener 9 dígitos");
-            return;
-        }
 
         RegistrationResult result = authRepository.registerUser(registration);
         showRegistrationFeedback(result);
@@ -126,6 +142,10 @@ public class MainActivity extends AppCompatActivity {
         if (result.isSuccess()) {
             syncWithSupabase(registration);
         }
+    }
+
+    private void handleGoogleSignIn() {
+        Toast.makeText(this, R.string.button_google, Toast.LENGTH_SHORT).show();
     }
 
     private void showRegistrationFeedback(RegistrationResult result) {
@@ -151,16 +171,16 @@ public class MainActivity extends AppCompatActivity {
         if (supabaseStatus == null) return;
         if (supabaseClient.isConfigured()) {
             supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_dark));
-            supabaseStatus.setText("Supabase: Listo");
+            supabaseStatus.setText(R.string.supabase_ready);
         } else {
             supabaseStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
-            supabaseStatus.setText("Supabase: No configurado");
+            supabaseStatus.setText(R.string.supabase_not_configured);
         }
     }
 
     private void syncWithSupabase(UserRegistration registration) {
         if (supabaseStatus == null || !supabaseClient.isConfigured()) return;
-        supabaseStatus.setText("Sincronizando...");
+        supabaseStatus.setText(R.string.supabase_creating);
         supabaseClient.signUp(registration.getEmail(), supabaseClient.getDbPassword(), new SupabaseClient.SupabaseCallback() {
             @Override
             public void onSuccess(String message) {
@@ -181,12 +201,8 @@ public class MainActivity extends AppCompatActivity {
 
     private UserRole resolveRoleFromId(int id) {
         if (id == R.id.role_couple) return UserRole.PAREJA_SW;
-        if (id == R.id.role_unicorn) return UserRole.UNICORNIO;
+        if (id == R.id.role_woman) return UserRole.MUJER;
         return UserRole.SINGLER;
-    }
-
-    private boolean isValidPhone(String phone) {
-        return !TextUtils.isEmpty(phone) && phone.length() == 9;
     }
 
     private String safeText(TextInputEditText editText) {

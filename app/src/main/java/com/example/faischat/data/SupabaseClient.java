@@ -38,13 +38,11 @@ public class MainActivity extends AppCompatActivity {
     private TextInputEditText partnerNameInput;
     private TextInputEditText partnerPhoneInput;
 
-<<<<<<< HEAD
     private MaterialButtonToggleGroup roleGroup;
     private View partnerSection;
 
     private TextView registrationStatus;
     private TextView supabaseStatus;
-=======
     private final String supabaseUrl;
     private final String anonKey;
     private final String dbPassword;
@@ -64,7 +62,16 @@ public class MainActivity extends AppCompatActivity {
         this.anonKey = anonKey;
         this.dbPassword = dbPassword;
     }
->>>>>>> e4235006efe9c5b0ab7259a333e6e25c5af60687
+
+    public SupabaseClient(
+            @NonNull String supabaseUrl,
+            @NonNull String anonKey,
+            @NonNull String dbPassword
+    ) {
+        this.supabaseUrl = supabaseUrl;
+        this.anonKey = anonKey;
+        this.dbPassword = dbPassword;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +79,15 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-<<<<<<< HEAD
         // Ajuste para la UI Edge-to-Edge
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
-=======
+    public String getDbPassword() {
+        return dbPassword;
+    }
+
     public String getDbPassword() {
         return dbPassword;
     }
@@ -117,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException | JSONException e) {
                 runOnMain(() -> callback.onError("Error de red: " + e.getMessage()));
             }
->>>>>>> e4235006efe9c5b0ab7259a333e6e25c5af60687
         });
 
         // Inicialización de Supabase

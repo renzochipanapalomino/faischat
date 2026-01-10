@@ -5,6 +5,8 @@
     <string name="field_name">Nombre visible</string>
     <string name="field_email">Correo (Gmail)</string>
     <string name="field_phone">Teléfono</string>
+    <string name="error_phone_length">El teléfono debe tener 9 dígitos.</string>
+    <string name="error_partner_phone_length">El teléfono de tu pareja debe tener 9 dígitos.</string>
     <string name="role_label">Elige tu rol</string>
     <string name="role_couple">Pareja SW</string>
     <string name="role_unicorn">Unicornio (mujer sola)</string>

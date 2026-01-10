@@ -38,11 +38,33 @@ public class MainActivity extends AppCompatActivity {
     private TextInputEditText partnerNameInput;
     private TextInputEditText partnerPhoneInput;
 
+<<<<<<< HEAD
     private MaterialButtonToggleGroup roleGroup;
     private View partnerSection;
 
     private TextView registrationStatus;
     private TextView supabaseStatus;
+=======
+    private final String supabaseUrl;
+    private final String anonKey;
+    private final String dbPassword;
+
+    public SupabaseClient(@NonNull String supabaseUrl, @NonNull String anonKey) {
+        this.supabaseUrl = supabaseUrl;
+        this.anonKey = anonKey;
+        this.dbPassword = "";
+    }
+
+    public SupabaseClient(
+            @NonNull String supabaseUrl,
+            @NonNull String anonKey,
+            @NonNull String dbPassword
+    ) {
+        this.supabaseUrl = supabaseUrl;
+        this.anonKey = anonKey;
+        this.dbPassword = dbPassword;
+    }
+>>>>>>> e4235006efe9c5b0ab7259a333e6e25c5af60687
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +72,52 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+<<<<<<< HEAD
         // Ajuste para la UI Edge-to-Edge
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+=======
+    public String getDbPassword() {
+        return dbPassword;
+    }
+
+    public void signUpOrLogin(String email, String password, SupabaseCallback callback) {
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            callback.onError("Supabase necesita correo y contraseña.");
+            return;
+        }
+
+        if (!isConfigured()) {
+            callback.onError("Configura SUPABASE_URL y SUPABASE_ANON_KEY en BuildConfig antes de usar el login.");
+            return;
+        }
+
+        executor.execute(() -> {
+            try {
+                JSONObject payload = new JSONObject();
+                payload.put("email", email);
+                payload.put("password", password);
+                Request request = new Request.Builder()
+                        .url(supabaseUrl + "/auth/v1/signup")
+                        .addHeader("apikey", anonKey)
+                        .addHeader("Authorization", "Bearer " + anonKey)
+                        .post(RequestBody.create(payload.toString(), JSON))
+                        .build();
+
+                Response response = httpClient.newCall(request).execute();
+                if (response.isSuccessful()) {
+                    runOnMain(() -> callback.onSuccess("Cuenta creada en Supabase."));
+                } else {
+                    String body = response.body() != null ? response.body().string() : "";
+                    String message = "Supabase respondió " + response.code() + ": " + body;
+                    runOnMain(() -> callback.onError(message));
+                }
+            } catch (IOException | JSONException e) {
+                runOnMain(() -> callback.onError("Error de red: " + e.getMessage()));
+            }
+>>>>>>> e4235006efe9c5b0ab7259a333e6e25c5af60687
         });
 
         // Inicialización de Supabase

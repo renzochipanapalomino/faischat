@@ -29,10 +29,22 @@ public class SupabaseClient {
 
     private final String supabaseUrl;
     private final String anonKey;
+    private final String dbPassword;
 
     public SupabaseClient(@NonNull String supabaseUrl, @NonNull String anonKey) {
         this.supabaseUrl = supabaseUrl;
         this.anonKey = anonKey;
+        this.dbPassword = "";
+    }
+
+    public SupabaseClient(
+            @NonNull String supabaseUrl,
+            @NonNull String anonKey,
+            @NonNull String dbPassword
+    ) {
+        this.supabaseUrl = supabaseUrl;
+        this.anonKey = anonKey;
+        this.dbPassword = dbPassword;
     }
 
     public boolean isConfigured() {
@@ -40,6 +52,10 @@ public class SupabaseClient {
                 && !supabaseUrl.contains("tu-proyecto")
                 && !TextUtils.isEmpty(anonKey)
                 && !anonKey.contains("TU_ANON_KEY");
+    }
+
+    public String getDbPassword() {
+        return dbPassword;
     }
 
     public void signUpOrLogin(String email, String password, SupabaseCallback callback) {

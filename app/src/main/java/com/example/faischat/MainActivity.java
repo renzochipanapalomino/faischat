@@ -20,11 +20,9 @@ import com.example.faischat.model.RegistrationResult;
 import com.example.faischat.model.ShareKeyResult;
 import com.example.faischat.model.UserRegistration;
 import com.example.faischat.model.UserRole;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.util.Objects;
 import java.time.Duration;
 import android.text.InputFilter;
 

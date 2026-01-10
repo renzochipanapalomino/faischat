@@ -92,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
         return dbPassword;
     }
 
+    public String getDbPassword() {
+        return dbPassword;
+    }
+
     public void signUpOrLogin(String email, String password, SupabaseCallback callback) {
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
             callback.onError("Supabase necesita correo y contraseña.");

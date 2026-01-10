@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/night_bg"
     android:fillViewport="true"
-    tools:context=".MainActivity">
+    tools:context="com.example.faischat.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

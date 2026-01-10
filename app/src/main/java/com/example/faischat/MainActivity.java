@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleRegistration() {
-        UserRole role = resolveRoleFromId(roleGroup.getCheckedRadioButtonId());
+        UserRole role = resolveRoleFromId(roleGroup.getCheckedButtonId());
 
         UserRegistration registration = new UserRegistration(
                 safeText(nameInput),

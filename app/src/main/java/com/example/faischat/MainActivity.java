@@ -20,11 +20,9 @@ import com.example.faischat.model.RegistrationResult;
 import com.example.faischat.model.ShareKeyResult;
 import com.example.faischat.model.UserRegistration;
 import com.example.faischat.model.UserRole;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.util.Objects;
 import java.time.Duration;
 import android.text.InputFilter;
 
@@ -155,6 +153,12 @@ public class MainActivity extends AppCompatActivity {
         registrationStatus.setText(result.getMessage());
     }
 
+    private void showError(String message) {
+        if (registrationStatus == null) return;
+        registrationStatus.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+        registrationStatus.setText(message);
+    }
+
     private void updatePartnerVisibility(boolean visible) {
         partnerSection.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
@@ -219,6 +223,11 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.role_couple) return UserRole.PAREJA_SW;
         if (id == R.id.role_unicorn) return UserRole.UNICORNIO;
         return UserRole.SINGLER;
+    }
+
+    private boolean isValidPhone(String phone) {
+        if (TextUtils.isEmpty(phone)) return true;
+        return phone.matches("\\d{9}");
     }
 
     private String safeText(TextInputEditText editText) {
